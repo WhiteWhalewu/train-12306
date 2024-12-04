@@ -41,7 +41,7 @@ public class MemberService {
         }
         Member member = new Member();
 
-        //雪花算法 64伪
+        //雪花算法 64位
         //   1bit不用：因为二进制中最高位是符号位，1表示负数，0表示正数，生成的id一般都是用整数，所以最高位固定为0
         //   41bit时间戳：这里采用的就是当前系统的具体时间，单位为毫秒
         //   10bit工作机器ID（workerId）：每台机器分配一个id，这样可以标示不同的机器，但是上限为1024，标示一个集群某个业务最多部署的机器个数上限
@@ -53,7 +53,6 @@ public class MemberService {
         //  将原本10位的机器码拆分成3位时钟序列及7位机器码
         //long ID = IdUtil.getSnowflake(1, 1).nextId();
         member.setId(SnowUtil.getSnowflakeNextId());
-        //member.setId(1L);
         member.setMobile(mobile);
         memberMapper.insert(member);
         return member.getId();
