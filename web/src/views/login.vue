@@ -1,7 +1,9 @@
 <template>
   <a-row class="login">
     <a-col :span="8" :offset="8" class="login-main">
-      <h1 style="text-align: center"><rocket-two-tone />&nbsp;甲蛙12306售票系统</h1>
+      <h1 style="text-align: center">
+          <rocket-two-tone/>&nbsp;12306售票系统
+      </h1>
       <a-form
           :model="loginForm"
           name="basic"
@@ -44,42 +46,47 @@ import { notification } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
 import store from "@/store";
 
+
 export default defineComponent({
   name: "login-view",
   setup() {
-    const router = useRouter();
+      const router = useRouter();
 
-    const loginForm = reactive({
-      mobile: '13000000000',
-      code: '',
-    });
+      let loginForm = reactive({
+          "mobile": '',
+          "code": '',
+      });
+      let instance = axios.create({
+          data: loginForm,
+          headers: {'Content-Type': 'multipart/form-data'}
+      })
 
-    const sendCode = () => {
-      axios.post("/member/member/send-code", {
-        mobile: loginForm.mobile
-      }).then(response => {
-        let data = response.data;
-        if (data.success) {
-          notification.success({ description: '发送验证码成功！' });
-          loginForm.code = "8888";
-        } else {
+      const sendCode = () => {
+          instance.post("/member/member/send-code", {
+              mobile: loginForm.mobile
+          }).then(response => {
+              let data = response.data;
+              if (data.success) {
+                  notification.success({description: '发送验证码成功！'});
+                  loginForm.code = "8888";
+              } else {
           notification.error({ description: data.message });
         }
       });
     };
 
     const login = () => {
-      axios.post("/member/member/login", loginForm).then((response) => {
-        let data = response.data;
-        if (data.success) {
-          notification.success({ description: '登录成功！' });
-          // 登录成功，跳到控台主页
-          router.push("/welcome");
-          store.commit("setMember", data.content);
-        } else {
-          notification.error({ description: data.message });
-        }
-      })
+        instance.post("/member/member/login", loginForm).then((response) => {
+            let data = response.data;
+            if (data.success) {
+                notification.success({description: '登录成功！'});
+                // 登录成功，跳到控台主页
+                router.push("/welcome");
+                store.commit("setMember", data.content);
+            } else {
+                notification.error({description: data.message});
+            }
+        })
     };
 
     return {
