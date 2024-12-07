@@ -71,6 +71,7 @@ export default defineComponent({
       updateTime: undefined,
     });
     const passengers = ref([]);
+
     // 分页的三个属性名是固定的
     const pagination = ref({
       total: 0,
@@ -111,32 +112,39 @@ export default defineComponent({
     };
 
     const onDelete = (record) => {
-      axios.delete("/member/passenger/delete/" + record.id).then((response) => {
-        const data = response.data;
-        if (data.success) {
-          notification.success({description: "删除成功！"});
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
-        } else {
-          notification.error({description: data.message});
-        }
+        axios.delete("/member/passenger/delete/" + record.id,
+            {
+                headers: {'Content-Type': 'multipart/form-data'}
+            }).then((response) => {
+            const data = response.data;
+            if (data.success) {
+                notification.success({description: "删除成功！"});
+                handleQuery({
+                    page: pagination.value.current,
+                    size: pagination.value.pageSize,
+                });
+            } else {
+                notification.error({description: data.message});
+            }
       });
     };
 
     const handleOk = () => {
-      axios.post("/member/passenger/save", passenger.value).then((response) => {
-        let data = response.data;
-        if (data.success) {
-          notification.success({description: "保存成功！"});
-          visible.value = false;
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize
-          });
-        } else {
-          notification.error({description: data.message});
+        //instance.post("/member/passenger/save",passenger.value)
+        axios.post("/member/passenger/save", passenger.value,
+            {
+                headers: {'Content-Type': 'multipart/form-data'}
+            }).then((response) => {
+            let data = response.data;
+            if (data.success) {
+                notification.success({description: "保存成功！"});
+                visible.value = false;
+                handleQuery({
+                    page: pagination.value.current,
+                    size: pagination.value.pageSize
+                });
+            } else {
+                notification.error({description: data.message});
         }
       });
     };
@@ -150,10 +158,11 @@ export default defineComponent({
       }
       loading.value = true;
       axios.get("/member/passenger/query-list", {
-        params: {
-          page: param.page,
-          size: param.size
-        }
+          params: {
+              page: param.page,
+              size: param.size
+          },
+          headers: {'Content-Type': 'multipart/form-data'}
       }).then((response) => {
         loading.value = false;
         let data = response.data;

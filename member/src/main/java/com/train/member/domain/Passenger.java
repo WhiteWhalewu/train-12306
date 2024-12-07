@@ -1,5 +1,7 @@
 package com.train.member.domain;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Date;
 
 public class Passenger {
@@ -8,6 +10,7 @@ public class Passenger {
     private Long memberId;
 
     private String name;
+
 
     private String idCard;
 

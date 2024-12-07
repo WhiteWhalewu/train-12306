@@ -1,6 +1,7 @@
 package com.train.member.resp;
 
 public class MemberLoginResp {
+
     private Long id;
 
     private String mobile;
